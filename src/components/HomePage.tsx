@@ -43,11 +43,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onTrainSelect }) => {
     if (!query.trim()) return;
     
     setIsSearching(true);
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Small delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
     setIsSearching(false);
     
-    // For demo, redirect to the existing train data
     onTrainSelect(query);
   };
 

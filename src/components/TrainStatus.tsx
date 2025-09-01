@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, RefreshCw, Train, Clock, MapPin } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Train, Clock, MapPin, AlertCircle } from 'lucide-react';
 import { Header } from './Header';
 import { Timeline } from './Timeline';
 import { MiniMap } from './MiniMap';
-import { mockTrainData } from '../data/mockData';
-import { TrainData } from '../types/Train';
+import { fetchTrainData, ApiResponse } from '../services/trainApi';
 
 interface TrainStatusProps {
   trainNumber: string;
@@ -12,18 +11,84 @@ interface TrainStatusProps {
 }
 
 export const TrainStatus: React.FC<TrainStatusProps> = ({ trainNumber, onBack }) => {
-  const [trainData, setTrainData] = useState<TrainData>(mockTrainData);
+  const [trainData, setTrainData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedStationIndex, setSelectedStationIndex] = useState<number>(
     mockTrainData.data.findIndex(station => station.is_current_station)
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await loadTrainData();
     setIsRefreshing(false);
   };
+
+  const loadTrainData = async () => {
+    try {
+      setError(null);
+      const data = await fetchTrainData(trainNumber);
+      setTrainData(data);
+      
+      // Set selected station to current station
+      const currentIndex = data.data.findIndex(station => station.is_current_station);
+      setSelectedStationIndex(currentIndex >= 0 ? currentIndex : 0);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load train data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTrainData();
+  }, [trainNumber]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">Loading Train Data</h2>
+          <p className="text-gray-500">Fetching live information for train {trainNumber}...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !trainData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="bg-red-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-red-600" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Unable to Load Train Data</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <div className="space-y-3">
+            <button
+              onClick={() => {
+                setLoading(true);
+                setError(null);
+                loadTrainData();
+              }}
+              className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={onBack}
+              className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const currentStation = trainData.data.find(station => station.is_current_station);
   const totalDistance = trainData.data[trainData.data.length - 1].distance;
@@ -109,9 +174,9 @@ export const TrainStatus: React.FC<TrainStatusProps> = ({ trainNumber, onBack })
         </div>
 
         {/* Main Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Timeline - Takes 2/3 on large screens */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <Timeline
               stations={trainData.data}
               selectedStationIndex={selectedStationIndex}
@@ -120,7 +185,7 @@ export const TrainStatus: React.FC<TrainStatusProps> = ({ trainNumber, onBack })
           </div>
 
           {/* Sidebar - Takes 1/3 on large screens */}
-          <div className="space-y-4">
+          <div className="lg:col-span-2 space-y-4">
             <MiniMap
               stations={trainData.data}
               selectedStationIndex={selectedStationIndex}
