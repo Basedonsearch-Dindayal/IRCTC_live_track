@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, RefreshCw, Train, Clock, MapPin, AlertCircle } from 'lucide-react';
-import { Header } from './Header';
-import { Timeline } from './Timeline';
+import { AlertCircle, ArrowLeft, Clock, MapPin, RefreshCw, Train } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { mockTrainData } from '../data/mockData';
+import { ApiResponse, fetchTrainData } from '../services/trainApi';
 import { MiniMap } from './MiniMap';
-import { fetchTrainData, ApiResponse } from '../services/trainApi';
+import { Timeline } from './Timeline';
 
 interface TrainStatusProps {
   trainNumber: string;

@@ -18,14 +18,18 @@ export interface ApiResponse {
 
 export const fetchTrainData = async (trainNumber: string): Promise<ApiResponse> => {
   try {
-    const response = await fetch(`https://rappid.in/apis/train.php?train_no=${trainNumber}`);
-    
+    if (!trainNumber || trainNumber.trim() === "") {
+      throw new Error("Train number is required.");
+    }
+  const response = await fetch(`/apis/train.php?train_no=${trainNumber}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
     const data = await response.json();
-    
+    console.log("API raw response:", data);
+    if (!data || !Array.isArray(data.data) || data.data.length === 0) {
+      throw new Error("No train data found for this train number.");
+    }
     // Add mock coordinates if not provided by API
     const dataWithCoordinates = data.data.map((station: any, index: number) => ({
       ...station,
@@ -34,7 +38,6 @@ export const fetchTrainData = async (trainNumber: string): Promise<ApiResponse> 
         lng: 77.2 + (index * 0.8) - (index * 0.2)
       }
     }));
-    
     return {
       ...data,
       data: dataWithCoordinates
