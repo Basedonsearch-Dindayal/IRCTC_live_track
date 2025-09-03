@@ -178,7 +178,10 @@ export const TrainStatus: React.FC<TrainStatusProps> = ({ trainNumber, onBack })
           {/* Timeline - Takes 2/3 on large screens */}
           <div className="lg:col-span-3">
             <Timeline
-              stations={trainData.data}
+              stations={trainData.data.map(station => ({
+                ...station,
+                coordinates: station.coordinates || { lat: 0, lng: 0 }
+              }))}
               selectedStationIndex={selectedStationIndex}
               onStationSelect={setSelectedStationIndex}
             />
@@ -187,7 +190,10 @@ export const TrainStatus: React.FC<TrainStatusProps> = ({ trainNumber, onBack })
           {/* Sidebar - Takes 1/3 on large screens */}
           <div className="lg:col-span-2 space-y-4">
             <MiniMap
-              stations={trainData.data}
+              stations={trainData.data.map(station => ({
+                ...station,
+                coordinates: station.coordinates || { lat: 0, lng: 0 }
+              }))}
               selectedStationIndex={selectedStationIndex}
               onStationSelect={setSelectedStationIndex}
             />
