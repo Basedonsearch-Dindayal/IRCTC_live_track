@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/apis/:match*",
+      "destination": "https://rappid.in/apis/:match*"
+    }
+  ]
+}
