@@ -21,7 +21,8 @@ export const fetchTrainData = async (trainNumber: string): Promise<ApiResponse> 
     if (!trainNumber || trainNumber.trim() === "") {
       throw new Error("Train number is required.");
     }
-  const response = await fetch(`/apis/train.php?train_no=${trainNumber}`);//api here
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/apis';
+    const response = await fetch(`${API_BASE_URL}/train.php?train_no=${trainNumber}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
