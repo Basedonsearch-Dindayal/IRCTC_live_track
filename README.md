@@ -1,20 +1,23 @@
-# Live Train Status IRCTC
 
-A simple project to track live train statuses using IRCTC data.
+# IRCTC Live Train Status Tracker
+
+A modern web application to track live train statuses using IRCTC data. Built with React, TypeScript, Vite, and Tailwind CSS.
+
 
 ## Features
 
-- Search for trains by number or name
+- Search trains by number or name
 - View real-time train running status
-- User-friendly interface
-- Fast and lightweight
+- Interactive timeline and mini map
+- Responsive, user-friendly interface
+
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.x (or your project’s main language)
-- Required packages (list them here, e.g., `requests`, `flask`, etc.)
+- Node.js (v18 or above recommended)
+- npm or yarn
 
 ### Installation
 
@@ -26,29 +29,35 @@ cd Live-train-status-IRCTC
 
 Install dependencies:
 ```bash
-pip install -r requirements.txt
+npm install
 ```
 
 ### Usage
 
-Run the application:
+Start the development server:
 ```bash
-python main.py
+npm run dev
 ```
-Or start your server as appropriate for your framework.
+
+Open [http://localhost:5173](http://localhost:5173) in your browser to view the app.
+
 
 ## How it Works
 
-- Connects to IRCTC or relevant train data API
+- Connects to IRCTC or relevant train data API (mock data used for demo)
 - Fetches and displays live status for selected trains
+- Shows train route, timeline, and station details
+
 
 ## Contributing
 
 Contributions are welcome! Please open issues or submit pull requests for improvements or suggestions.
 
+
 ## License
 
 This project is licensed under the MIT License.
+
 
 ## Author
 
